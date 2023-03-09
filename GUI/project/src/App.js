@@ -1,18 +1,19 @@
 import React from 'react';
 import "./App.css";
 
+import { MapContainer, TileLayer, FeatureGroup, Polygon} from 'react-leaflet';
+import { EditControl } from "react-leaflet-draw";
+import { useRef } from 'react';
 import "leaflet/dist/leaflet.css";
+import "leaflet-draw/dist/leaflet.draw.css";
+
+import L, {Point, DivIcon, polygon, map} from 'leaflet';
 
 
-import { MapContainer, TileLayer, Marker, Popup, Map , Polyline, Polygon, Rectangle} from 'react-leaflet';
+import { Button,Toolbar } from '@mui/material';
 
 
-//import Icon from './Icon';
-
-
-
-
-
+ 
 function App() {
 
 
@@ -29,18 +30,28 @@ const polygon = [
                 [46.8011, 8.2266],
               ]
 
+
+
 return (
   <>
-  <MapContainer center={[46.801111, 8.226667]} zoom={20} scrollWheelZoom={true}>
+  <Toolbar variant='regular'>
+  Timber Volume Calculation
+  </Toolbar>
+
+  <MapContainer center={[46.801111, 8.226667]} zoom={13} scrollWheelZoom={true}>
   {osm}
   <Polygon
     positions={polygon}
   />
-  
   </MapContainer>
+
+  <Button variant="outlined">Test</Button>
   </>
 
+
   );
+
+
 }
 
 export default App;
