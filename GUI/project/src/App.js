@@ -1,13 +1,12 @@
 import React from 'react';
-import ReactDOMServer from 'react-dom/server';
 import "./App.css";
 
 import "leaflet/dist/leaflet.css";
 
-import L, {Point, DivIcon} from 'leaflet';
-import { MapContainer, TileLayer, Marker, Popup, Map , Polyline, Circle} from 'react-leaflet';
 
-import marker from './data/Nuclear_symbol.svg';
+import { MapContainer, TileLayer, Marker, Popup, Map , Polyline, Polygon, Rectangle} from 'react-leaflet';
+
+
 //import Icon from './Icon';
 
 
@@ -23,15 +22,21 @@ var osm = (<TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 />)
 
-
+const polygon = [
+                [46.8011, 8.2266],
+                [46.8012, 8.2266],
+                [46.8011, 8.2267],
+                [46.8011, 8.2266],
+              ]
 
 return (
   <>
-  <MapContainer center={[46.801111, 8.226667]} zoom={8} scrollWheelZoom={true}>
+  <MapContainer center={[46.801111, 8.226667]} zoom={20} scrollWheelZoom={true}>
   {osm}
+  <Polygon
+    positions={polygon}
+  />
   
-    
-
   </MapContainer>
   </>
 
