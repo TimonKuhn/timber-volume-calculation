@@ -1,11 +1,13 @@
 import React from 'react';
 import Button from '@mui/material/Button';
-import "./App.css";
+import { MapContainer } from 'react-leaflet/MapContainer';
+import { TileLayer } from 'react-leaflet/TileLayer';
+import { useMap } from 'react-leaflet/hooks';
+
 
 import "leaflet/dist/leaflet.css";
+import "./App.css";
 
-//importing Leaflet Components
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet' 
 
 
 
