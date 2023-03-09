@@ -1,4 +1,5 @@
-.leaflet‐container {
+.leaflet-container {
+    align-items: center;
     width: 100%;
-    height: 97vh;
+    height: 80vh;
 }
