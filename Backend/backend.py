@@ -6,10 +6,6 @@ from calculation import calculation
 # Imports für den Rest
 import json
 
-result = {
-          "Anzahl": "n",
-          "Volumen": "n"
-    }
 
 
 app = FastAPI()
@@ -24,21 +20,28 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+class Data:
+  def __init__(self):
+    self.result = {"Anzahl" : "", "Volumen" : ""}
+
+data = Data()
+
 # Rest API
 @app.post("/polyjson")
 async def polyjson(info: Request):
     req_info = await info.json()
     new_polygon = json.loads(req_info['input'])
     print(f"polygon {new_polygon[0]}")
-    calculation(new_polygon)
-    print(result)
+    data.result = calculation(new_polygon)
+    #print(result)
+    return 
 
     
 
 @app.get("/result")
 async def root() :
-    return result
-    print(f"mein resultat{result}")
+    return data.result
+    print(f"mein resultat{data.result}")
 
 
 if __name__ == "__main__":
