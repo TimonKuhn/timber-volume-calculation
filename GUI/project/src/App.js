@@ -1,38 +1,59 @@
-import React, {useState} from 'react';
-import "./App.css";
+import React, { useEffect, useState } from 'react';
+import './App.css';
 
-import { MapContainer, TileLayer, FeatureGroup, Polygon} from 'react-leaflet';
-import { EditControl } from "react-leaflet-draw";
+import {MapContainer,  TileLayer,  FeatureGroup,  Marker,  Popup,  GeoJSON} from 'react-leaflet';
+import { EditControl } from 'react-leaflet-draw';
 import { useRef } from 'react';
-import "leaflet/dist/leaflet.css";
-import "leaflet-draw/dist/leaflet.draw.css";
+import 'leaflet/dist/leaflet.css';
+import 'leaflet-draw/dist/leaflet.draw.css';
+import L, { map } from 'leaflet';
+
+import { Button,Typography } from '@mui/material';
 
 
-import L, {Point, DivIcon, polygon, map, circle} from 'leaflet';
+//import * as turf from '@turf/turf';
 
-
-import { Button,AppBar,Toolbar} from '@mui/material';
 
 
 
 const App = () => {
-  const [center, setCenter] = useState({ lat: 24.4539, lng: 54.3773 });
-  const [mapLayers, setMapLayers] = useState([]);
+  const [data, setData] = useState(null);
 
-  const ZOOM_LEVEL = 12;
+  
+  const [center] = useState({ lat: 47.417, lng: 8.701 });
+  const [mapLayers, setMapLayers] = useState([]);
+  const [editableLayers, setEditableLayers] = useState(L.layerGroup());
+  const [treeCount, setTreeCount] = useState(0);
+
+  const ZOOM_LEVEL = 15;
   const mapRef = useRef();
 
+ 
+  const del_all = () => {
+    setMapLayers([]);
+    setEditableLayers(L.layerGroup([]));
+  };
+
   const _onCreate = (e) => {
-    console.log(e);
-
     const { layerType, layer } = e;
-    if (layerType === "polygon") {
-      const { _leaflet_id } = layer;
 
+    if (layerType === 'polygon') {
+      const latlngs = layer.getLatLngs()[0];
+
+      // Delete previous polygon
+
+      setMapLayers([]);
+
+      
+
+      // Add new polygon to mapLayers and editableLayers
+      const { _leaflet_id } = layer;
       setMapLayers((layers) => [
         ...layers,
-        { id: _leaflet_id, latlngs: layer.getLatLngs()[0] },
+        { id: _leaflet_id, latlngs },
       ]);
+      //setEditableLayers(L.layerGroup([layer]));
+      console.log("1", mapLayers)
     }
   };
 
@@ -62,19 +83,20 @@ const App = () => {
     Object.values(_layers).map(({ _leaflet_id }) => {
       setMapLayers((layers) => layers.filter((l) => l.id !== _leaflet_id));
     });
+
+    setTreeCount(0);
   };
+
+  const _onDrawStop  = (e) => {
+
+
+  }
 
   return (
     <>
-
       <div className="row">
         <div className="col text-center">
-          
-            <AppBar position='sticky' color='primary'>
-              <Toolbar variant=' '>Timber Volume Calculation</Toolbar>
-            </AppBar>
           <div className="col">
-
             <MapContainer center={center} zoom={ZOOM_LEVEL} ref={mapRef}>
               <FeatureGroup>
                 <EditControl
@@ -82,7 +104,9 @@ const App = () => {
                   onCreated={_onCreate}
                   onEdited={_onEdited}
                   onDeleted={_onDeleted}
+                  onEditStop={_onDrawStop}
                   draw={{
+                    polygon: true,
                     rectangle: false,
                     polyline: false,
                     circle: false,
@@ -94,10 +118,23 @@ const App = () => {
 
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+              
               />
+
+
             </MapContainer>
 
-            <pre className="text-left">{JSON.stringify(mapLayers, 0, 2)}</pre>
+            <Typography>count: {treeCount}</Typography>
+            <Typography>length: {mapLayers.length}</Typography>
+
+            <Button onClick={del_all}>del</Button>
+
+            <div>
+              {/* Render the filtered data */}
+              {data && <pre>{JSON.stringify(data, null, 2)}</pre>}
+            </div>
+
+             <pre className="text-left">{JSON.stringify(mapLayers, 0, 2)}</pre> 
           </div>
         </div>
       </div>

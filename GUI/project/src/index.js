@@ -6,8 +6,15 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
 
+
+import MyToolbar from './MyToolbar';
+import MyMap from './MyMap';
 import App from './App';
 
-
 const root = ReactDOMClient.createRoot(document.getElementById('root'));
-root.render(<App />);
+root.render(
+  <React.StrictMode>
+    <MyToolbar />
+    <App />
+  </React.StrictMode>
+);
