@@ -7,17 +7,44 @@ import { useRef } from 'react';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 import L, { map } from 'leaflet';
+import theme from './theme';
 
-import { Button,Typography } from '@mui/material';
+import { Button,Grid,Typography } from '@mui/material';
+import { ThemeProvider } from '@emotion/react';
 
-
-//import * as turf from '@turf/turf';
-
+import axios from 'axios';
+import { Container } from '@mui/system';
 
 
 
 const App = () => {
-  const [data, setData] = useState(null);
+
+  const [data, setData] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() =>{download();},[]) //keine ahnung was das genau macht aber es ist notwendig sonst fnunktionert das ganze nicht
+  
+  function download(){
+  let url = "http://localhost:8000/result"
+  
+  setLoading(true);
+
+  axios.get(url)
+  .then((response) => {
+        setData(response.data); 
+      }
+    ).catch(
+      (err) => { setError(err); }
+    ).finally(
+      (err) => { setLoading(false); }
+    )
+}
+
+
+
+
+  const [data_1, setData_1] = useState(null);
 
   
   const [center] = useState({ lat: 47.417, lng: 8.701 });
@@ -28,6 +55,12 @@ const App = () => {
   const ZOOM_LEVEL = 15;
   const mapRef = useRef();
 
+  const postpoly = () => {
+    axios.post('http://localhost:8000/polyjson',{
+    input: JSON.stringify(mapLayers)
+  })
+
+  }
  
   const del_all = () => {
     setMapLayers([]);
@@ -41,19 +74,15 @@ const App = () => {
       const latlngs = layer.getLatLngs()[0];
 
       // Delete previous polygon
-
       setMapLayers([]);
-
-      
-
       // Add new polygon to mapLayers and editableLayers
       const { _leaflet_id } = layer;
       setMapLayers((layers) => [
         ...layers,
         { id: _leaflet_id, latlngs },
       ]);
+      console.log(JSON.stringify(mapLayers, 0, 2))
       //setEditableLayers(L.layerGroup([layer]));
-      console.log("1", mapLayers)
     }
   };
 
@@ -93,7 +122,7 @@ const App = () => {
   }
 
   return (
-    <>
+    <ThemeProvider theme={theme}>
       <div className="row">
         <div className="col text-center">
           <div className="col">
@@ -124,21 +153,25 @@ const App = () => {
 
             </MapContainer>
 
-            <Typography>count: {treeCount}</Typography>
-            <Typography>length: {mapLayers.length}</Typography>
-
-            <Button onClick={del_all}>del</Button>
-
             <div>
               {/* Render the filtered data */}
-              {data && <pre>{JSON.stringify(data, null, 2)}</pre>}
+              {data_1 && <pre>{JSON.stringify(data_1, null, 2)}</pre>}
             </div>
 
-             <pre className="text-left">{JSON.stringify(mapLayers, 0, 2)}</pre> 
+            <Grid container direction="column" marginY={3}>
+              <Grid item md={6}>      
+                <Button variant='contained' onClick={postpoly()}>Calculate</Button>
+              </Grid>
+              <Grid item  md={6}>
+                <Typography>Count: {data["Anzahl"]} <br/></Typography>
+                <Typography>Volume: {data["Volumen"]}</Typography>
+              </Grid>
+            </Grid>
+            {/* <pre className="text-left">{JSON.stringify(mapLayers, 0, 2)}</pre> */}
           </div>
         </div>
       </div>
-    </>
+    </ThemeProvider>
   );
 };
 
