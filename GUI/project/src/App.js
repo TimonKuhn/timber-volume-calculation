@@ -47,7 +47,7 @@ const App = () => {
   const [data_1, setData_1] = useState(null);
 
   
-  const [center] = useState({ lat: 47.417, lng: 8.701 });
+  const [center] = useState({ lat: 46.700020, lng: 9.563707 });
   const [mapLayers, setMapLayers] = useState([]);
   const [editableLayers, setEditableLayers] = useState(L.layerGroup());
   const [treeCount, setTreeCount] = useState(0);
@@ -160,7 +160,8 @@ const App = () => {
 
             <Grid container direction="column" marginY={3}>
               <Grid item md={6}>      
-                <Button variant='contained' onClick={postpoly()}>Calculate</Button>
+                <Button variant='contained' onClick={postpoly() }></Button>
+
               </Grid>
               <Grid item  md={6}>
                 <Typography>Count: {data["Anzahl"]} <br/></Typography>
